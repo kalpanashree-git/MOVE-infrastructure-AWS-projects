@@ -1,0 +1,14 @@
+---
+
+- name: all
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create test report
+      copy:
+        content: |
+          Hello from Kalpana by Ansible :)
+        dest: "{{ playbook_dir }}/../reports/test1.txt"
+      delegate_to: localhost
+      run_once: true

@@ -1,0 +1,20 @@
+---
+
+- name: Health Check - Collect System Information
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Display Health Report
+      debug:
+        msg: 
+          - "================================="
+          - "Server        : {{ inventory_hostname }}"
+          - "Hostname      : {{ ansible_hostname }}"
+          - "OS            : {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "kernel        : {{ ansible_kernel }}"
+          - "CPU VCPUS     : {{ ansible_processor_vcpus }}"
+          - "Memory (MB)   : {{ ansible_memtotal_mb }}"
+          - "IP Address    : {{ ansible_default_ipv4.address }}"
+          - "=================================="
+

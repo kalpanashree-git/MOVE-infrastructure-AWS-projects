@@ -1,0 +1,91 @@
+===========================================
+MOVE ENTERPRISE PATCH MANAGEMENT PLATFORM
+        PRE-PATCH SYSTEM AUDIT
+===========================================
+
+Report Name   : Pre-Patch System Audit
+Executed By   : ana
+Generated On  : 26-08-10 10:41:40 AM IST
+Environment   : Production
+Total Servers : 5
+
+===========================================
+SERVER : app1
+===========================================
+
+Inventory Alias : app1
+Hostname        : move-prod-app
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1008-aws
+Architecture    : x86_64
+Uptime          : up 36 minutes
+
+CPC vCPUs     : 2 vCPUs
+Memory (MB)   : 908 MB
+Private IP    : 10.0.2.22 MB
+
+===========================================
+===========================================
+SERVER : app2
+===========================================
+
+Inventory Alias : app2
+Hostname        : ip-10-0-2-80
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 36 minutes
+
+CPC vCPUs     : 2 vCPUs
+Memory (MB)   : 908 MB
+Private IP    : 10.0.2.80 MB
+
+===========================================
+===========================================
+SERVER : monitor
+===========================================
+
+Inventory Alias : monitor
+Hostname        : ip-10-0-2-41
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 36 minutes
+
+CPC vCPUs     : 2 vCPUs
+Memory (MB)   : 908 MB
+Private IP    : 10.0.2.41 MB
+
+===========================================
+===========================================
+SERVER : nat
+===========================================
+
+Inventory Alias : nat
+Hostname        : ip-10-0-1-129
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 36 minutes
+
+CPC vCPUs     : 2 vCPUs
+Memory (MB)   : 908 MB
+Private IP    : 10.0.1.129 MB
+
+===========================================
+===========================================
+SERVER : bastion
+===========================================
+
+Inventory Alias : bastion
+Hostname        : ip-10-0-1-39
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1008-aws
+Architecture    : x86_64
+Uptime          : up 36 minutes
+
+CPC vCPUs     : 2 vCPUs
+Memory (MB)   : 908 MB
+Private IP    : 10.0.1.39 MB
+
+===========================================

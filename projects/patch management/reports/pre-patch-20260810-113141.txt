@@ -1,0 +1,252 @@
+===========================================
+MOVE ENTERPRISE PATCH MANAGEMENT PLATFORM
+        PRE-PATCH SYSTEM AUDIT
+===========================================
+
+Report Name   : Pre-Patch System Audit
+Executed By   : ana
+Generated On  : 26-08-10 11:31:41 AM IST
+Environment   : Production
+Total Servers : 5
+
+===========================================
+SERVER : app1
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : app1
+Hostname        : move-prod-app
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1008-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 26 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.22 MB
+
+Disk Usage
+----------
+
+Filesystem       : /
+Total Space      : 6.6 GB
+Available Space  : 60.171631567466754
+Threshold        : >20%
+Status           : PASSFilesystem       : /snap/amazon-ssm-agent/13349
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/core22/2411
+Total Space      : 0.1 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/snapd/26865
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/amazon-ssm-agent/13009
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /boot
+Total Space      : 1.0 GB
+Available Space  : 76.70006125634794
+Threshold        : >20%
+Status           : PASSFilesystem       : /boot/efi
+Total Space      : 0.1 GB
+Available Space  : 93.9966208468476
+Threshold        : >20%
+Status           : PASS===========================================
+===========================================
+SERVER : app2
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : app2
+Hostname        : ip-10-0-2-80
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 26 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.80 MB
+
+Disk Usage
+----------
+
+Filesystem       : /
+Total Space      : 6.6 GB
+Available Space  : 65.73981850056957
+Threshold        : >20%
+Status           : PASSFilesystem       : /snap/amazon-ssm-agent/13009
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/core22/2411
+Total Space      : 0.1 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/snapd/26865
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /boot
+Total Space      : 1.0 GB
+Available Space  : 83.56867627008121
+Threshold        : >20%
+Status           : PASSFilesystem       : /boot/efi
+Total Space      : 0.1 GB
+Available Space  : 93.9966208468476
+Threshold        : >20%
+Status           : PASS===========================================
+===========================================
+SERVER : monitor
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : monitor
+Hostname        : ip-10-0-2-41
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 26 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.41 MB
+
+Disk Usage
+----------
+
+Filesystem       : /
+Total Space      : 6.6 GB
+Available Space  : 65.74149199779791
+Threshold        : >20%
+Status           : PASSFilesystem       : /snap/amazon-ssm-agent/13009
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/snapd/26865
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/core22/2411
+Total Space      : 0.1 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /boot
+Total Space      : 1.0 GB
+Available Space  : 83.56867627008121
+Threshold        : >20%
+Status           : PASSFilesystem       : /boot/efi
+Total Space      : 0.1 GB
+Available Space  : 93.9966208468476
+Threshold        : >20%
+Status           : PASS===========================================
+===========================================
+SERVER : nat
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : nat
+Hostname        : ip-10-0-1-129
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 26 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.1.129 MB
+
+Disk Usage
+----------
+
+Filesystem       : /
+Total Space      : 6.6 GB
+Available Space  : 57.02770734342125
+Threshold        : >20%
+Status           : PASSFilesystem       : /snap/amazon-ssm-agent/13009
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/core22/2411
+Total Space      : 0.1 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/amazon-ssm-agent/13349
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/snapd/26865
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /boot
+Total Space      : 1.0 GB
+Available Space  : 76.69966605410319
+Threshold        : >20%
+Status           : PASSFilesystem       : /boot/efi
+Total Space      : 0.1 GB
+Available Space  : 93.9966208468476
+Threshold        : >20%
+Status           : PASS===========================================
+===========================================
+SERVER : bastion
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : bastion
+Hostname        : ip-10-0-1-39
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1008-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 26 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.1.39 MB
+
+Disk Usage
+----------
+
+Filesystem       : /
+Total Space      : 6.6 GB
+Available Space  : 56.184553274341596
+Threshold        : >20%
+Status           : PASSFilesystem       : /snap/amazon-ssm-agent/13009
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/snapd/26865
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/core22/2411
+Total Space      : 0.1 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/amazon-ssm-agent/13349
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /snap/snapd/27406
+Total Space      : 0.0 GB
+Available Space  : 0.0
+Threshold        : >20%
+Status           : FAILFilesystem       : /boot
+Total Space      : 1.0 GB
+Available Space  : 76.80874187365384
+Threshold        : >20%
+Status           : PASSFilesystem       : /boot/efi
+Total Space      : 0.1 GB
+Available Space  : 93.9966208468476
+Threshold        : >20%
+Status           : PASS===========================================

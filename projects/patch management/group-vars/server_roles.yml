@@ -1,0 +1,34 @@
+server_roles:
+
+  bastion:
+    role_name: Bastion Host
+    services:
+      - ssh
+    ports:
+      - 22
+
+  app:
+    role_name: Application Server
+    services:
+      - ssh
+      - nginx
+    ports:
+      - 22
+      - 80
+
+  monitor:
+    role_name: Monitoring Server
+    services:
+      - ssh
+      - prometheus
+      - grafana
+    ports:
+      - 22
+      - 3000
+      - 9090
+
+  nat:
+    role_name: NAT Instance
+    services: []
+    ports: []
+

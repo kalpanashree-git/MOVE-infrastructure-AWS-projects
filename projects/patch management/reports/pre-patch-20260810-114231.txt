@@ -1,0 +1,141 @@
+===========================================
+MOVE ENTERPRISE PATCH MANAGEMENT PLATFORM
+        PRE-PATCH SYSTEM AUDIT
+===========================================
+
+Report Name   : Pre-Patch System Audit
+Executed By   : ana
+Generated On  : 26-08-10 11:42:31 AM IST
+Environment   : Production
+Total Servers : 5
+
+===========================================
+SERVER : app1
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : app1
+Hostname        : move-prod-app
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1008-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 37 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.22 MB
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 60.2%
+Threshold     : >20%
+Status        : PASS
+===========================================
+===========================================
+SERVER : app2
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : app2
+Hostname        : ip-10-0-2-80
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 37 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.80 MB
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 65.7%
+Threshold     : >20%
+Status        : PASS
+===========================================
+===========================================
+SERVER : monitor
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : monitor
+Hostname        : ip-10-0-2-41
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 37 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.41 MB
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 65.7%
+Threshold     : >20%
+Status        : PASS
+===========================================
+===========================================
+SERVER : nat
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : nat
+Hostname        : ip-10-0-1-129
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 37 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.1.129 MB
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 57.0%
+Threshold     : >20%
+Status        : PASS
+===========================================
+===========================================
+SERVER : bastion
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : bastion
+Hostname        : ip-10-0-1-39
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1008-aws
+Architecture    : x86_64
+Uptime          : up 1 hour, 37 minutes
+CPC vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.1.39 MB
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 56.2%
+Threshold     : >20%
+Status        : PASS
+===========================================

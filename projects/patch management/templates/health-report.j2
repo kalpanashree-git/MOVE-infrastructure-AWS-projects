@@ -1,0 +1,146 @@
+===========================================
+MOVE ENTERPRISE PATCH MANAGEMENT PLATFORM
+        PRE-PATCH SYSTEM AUDIT
+===========================================
+
+Report Name   : Pre-Patch System Audit
+Executed By   : {{ lookup('env', 'USER') }}
+Generated On  : {{ lookup('pipe', 'date "+%y-%m-%d %I:%M:%S %p %Z"') }}
+Environment   : Production
+Total Servers : {{ ansible_play_hosts | length }}
+
+{% for host in ansible_play_hosts %}
+===========================================
+SERVER : {{host}}
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : {{ host }}
+Hostname        : {{ hostvars[host].ansible_hostname }}
+Operating Sys   : {{ hostvars[host].ansible_distribution }} {{hostvars[host].ansible_distribution_version }}
+Kernel          : {{ hostvars[host].ansible_kernel }}
+Architecture    : {{ hostvars[host].ansible_architecture }}
+Uptime          : {{ hostvars[host].uptime_output.stdout }}
+CPC vCPUs       : {{ hostvars[host].ansible_processor_vcpus }} vCPUs
+Memory (MB)     : {{ hostvars[host].ansible_memtotal_mb }} MB
+Private IP      : {{ hostvars[host].ansible_default_ipv4.address }} MB
+
+Disk Usage
+----------
+
+{% for mount in hostvars[host].ansible_mounts %}
+{% if mount.mount == "/" %}
+Filesystem    : {{ mount.mount }}
+Total Space   : {{ (mount.size_total / 1024 / 1024 / 1024) | round(1) }} GB
+Available     : {{ ((mount.size_available * 100) / mount.size_total)| round(1) }}%
+Threshold     : >20%
+Status        : {% if ((mount.size_available * 100) / mount.size_total) > 20 %}PASS{% else %}FAIL{% endif %}
+{% endif %}
+{% endfor %}
+
+
+Network & Connectivity
+----------------------
+
+Gateway : {{ hostvars[host].ansible_default_ipv4.gateway }}
+DNS     : {{ hostvars[host].ansible_dns.nameservers | join(', ') }}
+
+
+Critical Services
+-----------------
+{% if host in groups['bastion_servers'] %}
+{% set role = server_roles.bastion %}
+{% elif host in groups['app_servers'] %}
+{% set role = server_roles.app %}
+{% elif host in groups['monitoring_servers'] %}
+{% set role = server_roles.monitor %}
+{% elif host in groups['nat_servers'] %}
+{% set role = server_roles.nat %}
+{% endif %}
+
+{% for service in role.services %}
+{{ service | upper }} : {{ hostvars[host].ansible_facts.services[service + '.service'].state | default('not found') | upper }}
+{% endfor %}
+
+Listening Ports
+---------------
+{% set expected_ports = role.ports | map('string') | list %} 
+{% set actual_ports = listening_ports.stdout | regex_findall(':(\d+)\\s') | unique | list %}
+{% set missing_ports = expected_ports | difference(actual_ports) %}
+{% set unexpected_ports = actual_ports | difference(expected_ports) %}
+
+Expected Ports : {{ role.ports | join(', ') }}
+Actual Ports   : {{ actual_ports | join(', ') }}
+
+{% if missing_ports | length > 0 %}
+Status         : FAIL
+Missing        : {{ missing_ports | join(', ')}}
+{% elif unexpected_ports | length > 0 %}
+Status         : WARNING
+Unexpected     : {{ unexpected_ports | join(', ')}}
+{% else %}
+status : PASS
+{% endif %}
+
+
+Available Updates
+-----------------
+
+Total Updates    : {{ (hostvars[host].available_updates.stdout_lines | length) -1 }}
+
+Security Updates :{{ hostvars[host].security_updates.stdout_lines | length }}
+
+
+Pre-Patch Safety Check
+----------------------
+
+Disk Space       : {{ 'PASS' if ((hostvars[host].ansible_mounts | selectattr('mount', 'equalto', '/') | first).size_available*100 / (hostvars[host].ansible_mounts | selectattr('mount', 'equalto', '/') | first).size_total) >20 else 'FAIL' }}
+Package Manager  : {{ 'PASS' if hostvars[host].dpkg_lock.rc != 0 else 'FAIL' }}
+System Load      : {{ 'PASS' if (hostvars[host].load_output.stdout.split()[0] | float / hostvars[host].ansible_processor_vcpus) < 1.0 else 'FAIL' }}
+Internet Access  : {{ 'PASS' if hostvars[host].internet_check.rc == 0 else 'FAIL' }}
+DNS Resolution   : {{ 'PASS' if hostvars[host].dns_check.rc == 0 else 'FAIL' }}
+Reboot Required  : {{ 'YES' if hostvars[host].reboot_required.stat.exists else 'NO' }}
+
+
+Overall Decision
+----------------
+
+{% set disk_ok = ((hostvars[host].ansible_mounts | selectattr('mount', 'equalto', '/') | first).size_available * 100 / (hostvars[host].ansible_mounts | selectattr('mount', 'equalto', '/') | first).size_total) > 20 %}
+{% set package_ok = hostvars[host].dpkg_lock.rc != 0 %}
+{% set load_ok = (hostvars[host].load_output.stdout.split()[0] | float / hostvars[host].ansible_processor_vcpus) < 1.0 %}
+{% set internet_ok = hostvars[host].internet_check.rc == 0 %}
+{% set dns_ok = hostvars[host].dns_check.rc == 0 %}
+{% set reboot_pending = hostvars[host].reboot_required.stat.exists %}
+
+{% if not disk_ok or not package_ok or not load_ok or not internet_ok or not dns_ok %}
+Decision : PATCH ABORTED
+
+Failed Checks
+-------------
+{% if not disk_ok %}✘ Disk Space
+{% endif %}
+{% if not package_ok %}✘ Package Manager
+{% endif %}
+{% if not load_ok %}✘ System Load
+{% endif %}
+{% if not internet_ok %}✘ Internet Connectivity
+{% endif %}
+{% if not dns_ok %}✘ DNS Resolution
+{% endif %}
+
+{% elif reboot_pending %}
+Decision : WARNING !!!
+
+Warning
+-------
+⚠  Reboot Required
+{% else %}
+Decision : SAFE TO PATCH
+{% endif %}
+
+
+===========================================
+
+{% endfor %}

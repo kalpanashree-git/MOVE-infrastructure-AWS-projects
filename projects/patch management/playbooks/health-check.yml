@@ -1,20 +1,68 @@
 ---
-
-- name: Health Check - Collect System Information
+- name: Pre-patch System Audit
   hosts: all
   gather_facts: true
+  
+  vars_files:
+    - ../group-vars/server_roles.yml
 
   tasks:
-    - name: Display Health Report
-      debug:
-        msg: 
-          - "================================="
-          - "Server        : {{ inventory_hostname }}"
-          - "Hostname      : {{ ansible_hostname }}"
-          - "OS            : {{ ansible_distribution }} {{ ansible_distribution_version }}"
-          - "kernel        : {{ ansible_kernel }}"
-          - "CPU VCPUS     : {{ ansible_processor_vcpus }}"
-          - "Memory (MB)   : {{ ansible_memtotal_mb }}"
-          - "IP Address    : {{ ansible_default_ipv4.address }}"
-          - "=================================="
+    - name: Get System uptime
+      command: uptime -p
+      register: uptime_output
+
+    - name: Gather service facts
+      service_facts:  
+
+    - name: Gather Listening Ports
+      command: ss -tuln
+      register: listening_ports
+      changed_when: false
+
+    - name: Check Available updates
+      command: apt list --upgradable
+      register: available_updates
+      changed_when: false
+
+    - name: Check Security updates
+      shell: apt list --upgradable 2>/dev/null | grep -i  security
+      register: security_updates
+      changed_when: false
+      failed_when: false
+
+    - name: Check System load
+      command: cat /proc/loadavg
+      register: load_output
+      changed_when: false
+
+    - name: Check package manager lock
+      command: fuser /var/lib/dpkg/lock-frontend
+      register: dpkg_lock
+      changed_when: false
+      failed_when: false
+
+    - name: Check reboot required
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+
+    - name: Check internet connectivity
+      command: ping -c 2 -w 2 8.8.8.8
+      register: internet_check
+      changed_when: false
+      failed_when: false
+
+    - name: Check DNS resolution
+      command: getent hosts google.com
+      register: dns_check
+      changed_when: false
+      failed_when: false
+
+    - name: Generate Pre-Patch Health Report
+      template:
+        src: ../templates/health-report.j2
+        dest: "{{ playbook_dir }}/../reports/pre-patch-{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}.txt"
+#       dest: "{{ lookup('pipe', 'pwd') }}/reports/pre-patch-health{{ lookup('pipe', 'date +%y%m%d-%H%M%S') }}.txt"
+      delegate_to: localhost
+      run_once: true
 

@@ -16,20 +16,18 @@ SERVER : {{host}}
 
 Server Details
 --------------
-
 Inventory Alias : {{ host }}
 Hostname        : {{ hostvars[host].ansible_hostname }}
 Operating Sys   : {{ hostvars[host].ansible_distribution }} {{hostvars[host].ansible_distribution_version }}
 Kernel          : {{ hostvars[host].ansible_kernel }}
 Architecture    : {{ hostvars[host].ansible_architecture }}
 Uptime          : {{ hostvars[host].uptime_output.stdout }}
-CPC vCPUs       : {{ hostvars[host].ansible_processor_vcpus }} vCPUs
+CPU vCPUs       : {{ hostvars[host].ansible_processor_vcpus }} vCPUs
 Memory (MB)     : {{ hostvars[host].ansible_memtotal_mb }} MB
-Private IP      : {{ hostvars[host].ansible_default_ipv4.address }} MB
+Private IP      : {{ hostvars[host].ansible_default_ipv4.address }}
 
 Disk Usage
 ----------
-
 {% for mount in hostvars[host].ansible_mounts %}
 {% if mount.mount == "/" %}
 Filesystem    : {{ mount.mount }}
@@ -43,10 +41,10 @@ Status        : {% if ((mount.size_available * 100) / mount.size_total) > 20 %}P
 
 Network & Connectivity
 ----------------------
-
-Gateway : {{ hostvars[host].ansible_default_ipv4.gateway }}
-DNS     : {{ hostvars[host].ansible_dns.nameservers | join(', ') }}
-
+Gateway         : {{ hostvars[host].ansible_default_ipv4.gateway }}
+DNS             : {{ hostvars[host].ansible_dns.nameservers | join(', ') }}
+Internet Access : {{ 'PASS' if hostvars[host].internet_check.rc == 0 else 'FAIL' }}
+DNS Resolution  : {{ 'PASS' if hostvars[host].dns_check.rc == 0 else 'FAIL' }}
 
 Critical Services
 -----------------
@@ -67,13 +65,11 @@ Critical Services
 Listening Ports
 ---------------
 {% set expected_ports = role.ports | map('string') | list %} 
-{% set actual_ports = listening_ports.stdout | regex_findall(':(\d+)\\s') | unique | list %}
+{% set actual_ports = hostvars[host].listening_ports.stdout | regex_findall(':(\d+)\\s') | unique | list %}
 {% set missing_ports = expected_ports | difference(actual_ports) %}
 {% set unexpected_ports = actual_ports | difference(expected_ports) %}
-
 Expected Ports : {{ role.ports | join(', ') }}
 Actual Ports   : {{ actual_ports | join(', ') }}
-
 {% if missing_ports | length > 0 %}
 Status         : FAIL
 Missing        : {{ missing_ports | join(', ')}}
@@ -87,7 +83,6 @@ status : PASS
 
 Available Updates
 -----------------
-
 Total Updates    : {{ (hostvars[host].available_updates.stdout_lines | length) -1 }}
 
 Security Updates :{{ hostvars[host].security_updates.stdout_lines | length }}
@@ -95,7 +90,6 @@ Security Updates :{{ hostvars[host].security_updates.stdout_lines | length }}
 
 Pre-Patch Safety Check
 ----------------------
-
 Disk Space       : {{ 'PASS' if ((hostvars[host].ansible_mounts | selectattr('mount', 'equalto', '/') | first).size_available*100 / (hostvars[host].ansible_mounts | selectattr('mount', 'equalto', '/') | first).size_total) >20 else 'FAIL' }}
 Package Manager  : {{ 'PASS' if hostvars[host].dpkg_lock.rc != 0 else 'FAIL' }}
 System Load      : {{ 'PASS' if (hostvars[host].load_output.stdout.split()[0] | float / hostvars[host].ansible_processor_vcpus) < 1.0 else 'FAIL' }}
@@ -106,15 +100,23 @@ Reboot Required  : {{ 'YES' if hostvars[host].reboot_required.stat.exists else '
 
 Overall Decision
 ----------------
-
+{%set service_failed = namespace(value=false) %}
+{%for service in role.services %}
+{% set service_state = hostvars[host].ansible_facts.services[service + '.service'].state | default('not found') %}
+{% if service_state != 'running' %}
+{% set service_failed.value = true %}
+{% endif %}
+{% endfor %}
 {% set disk_ok = ((hostvars[host].ansible_mounts | selectattr('mount', 'equalto', '/') | first).size_available * 100 / (hostvars[host].ansible_mounts | selectattr('mount', 'equalto', '/') | first).size_total) > 20 %}
 {% set package_ok = hostvars[host].dpkg_lock.rc != 0 %}
 {% set load_ok = (hostvars[host].load_output.stdout.split()[0] | float / hostvars[host].ansible_processor_vcpus) < 1.0 %}
 {% set internet_ok = hostvars[host].internet_check.rc == 0 %}
 {% set dns_ok = hostvars[host].dns_check.rc == 0 %}
 {% set reboot_pending = hostvars[host].reboot_required.stat.exists %}
+{% set critical_failure = not disk_ok or not package_ok or not load_ok or not internet_ok or not dns_ok or service_failed.value or (missing_ports | length > 0) %}
+{% set warning = (unexpected_ports | length > 0) or reboot_pending %}
 
-{% if not disk_ok or not package_ok or not load_ok or not internet_ok or not dns_ok %}
+{% if critical_failure %}
 Decision : PATCH ABORTED
 
 Failed Checks
@@ -129,18 +131,25 @@ Failed Checks
 {% endif %}
 {% if not dns_ok %}✘ DNS Resolution
 {% endif %}
+{% if service_failed.value %}✘ Critical Services
+{% endif %}
+{% if missing_ports | length > 0 %}✘ Missing Expected Ports
+{% endif %}
 
-{% elif reboot_pending %}
+{% elif warning  %}
 Decision : WARNING !!!
 
-Warning
--------
-⚠  Reboot Required
+Warnings
+--------
+{% if unexpected_ports | length > 0 %}⚠  Unexpected Ports
+{% endif %}
+{% if reboot_pending %}⚠  Reboot Required
+{% endif %}
 {% else %}
 Decision : SAFE TO PATCH
 {% endif %}
 
 
-===========================================
+               |==================|
 
 {% endfor %}

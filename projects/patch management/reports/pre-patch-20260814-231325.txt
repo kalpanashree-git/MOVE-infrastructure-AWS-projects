@@ -1,0 +1,423 @@
+===========================================
+MOVE ENTERPRISE PATCH MANAGEMENT PLATFORM
+        PRE-PATCH SYSTEM AUDIT
+===========================================
+
+Report Name   : Pre-Patch System Audit
+Executed By   : ana
+Generated On  : 26-08-14 11:13:25 PM IST
+Environment   : Production
+Total Servers : 5
+
+===========================================
+SERVER : app1
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : app1
+Hostname        : move-prod-app
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1008-aws
+Architecture    : x86_64
+Uptime          : up 13 hours, 19 minutes
+CPU vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.22
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 53.6%
+Threshold     : >20%
+Status        : PASS
+
+Network & Connectivity
+----------------------
+
+Gateway : 10.0.2.1
+DNS     : 127.0.0.53
+
+
+Critical Services
+-----------------
+
+SSH : RUNNING
+NGINX : RUNNING
+
+Listening Ports
+---------------
+ 
+
+Expected Ports : 22, 80
+Actual Ports   : 323, 53, 68, 80, 22
+Status         : WARNING
+Unexpected     : 323, 68, 53
+
+
+Available Updates
+-----------------
+
+Total Updates    : 71
+
+Security Updates :39
+
+
+Pre-Patch Safety Check
+----------------------
+
+Disk Space       : PASS
+Package Manager  : PASS
+System Load      : PASS
+Internet Access  : PASS
+DNS Resolution   : PASS
+Reboot Required  : NO
+
+
+Overall Decision
+----------------
+
+
+Decision : WARNING !!!
+
+Warnings
+--------
+⚠  Unexpected Ports
+
+
+
+===========================================
+
+===========================================
+SERVER : app2
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : app2
+Hostname        : ip-10-0-2-80
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 13 hours, 19 minutes
+CPU vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.80
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 58.1%
+Threshold     : >20%
+Status        : PASS
+
+Network & Connectivity
+----------------------
+
+Gateway : 10.0.2.1
+DNS     : 127.0.0.53
+
+
+Critical Services
+-----------------
+
+SSH : RUNNING
+NGINX : NOT FOUND
+
+Listening Ports
+---------------
+ 
+
+Expected Ports : 22, 80
+Actual Ports   : 323, 53, 68, 22
+Status         : FAIL
+Missing        : 80
+
+
+Available Updates
+-----------------
+
+Total Updates    : 112
+
+Security Updates :80
+
+
+Pre-Patch Safety Check
+----------------------
+
+Disk Space       : PASS
+Package Manager  : PASS
+System Load      : PASS
+Internet Access  : PASS
+DNS Resolution   : PASS
+Reboot Required  : NO
+
+
+Overall Decision
+----------------
+
+
+Decision : PATCH ABORTED
+
+Failed Checks
+-------------
+✘ Critical Services
+✘ Missing Expected Ports
+
+
+
+===========================================
+
+===========================================
+SERVER : monitor
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : monitor
+Hostname        : ip-10-0-2-41
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1006-aws
+Architecture    : x86_64
+Uptime          : up 13 hours, 19 minutes
+CPU vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.2.41
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 58.1%
+Threshold     : >20%
+Status        : PASS
+
+Network & Connectivity
+----------------------
+
+Gateway : 10.0.2.1
+DNS     : 127.0.0.53
+
+
+Critical Services
+-----------------
+
+SSH : RUNNING
+PROMETHEUS : NOT FOUND
+GRAFANA : NOT FOUND
+
+Listening Ports
+---------------
+ 
+
+Expected Ports : 22, 3000, 9090
+Actual Ports   : 53, 68, 323, 22
+Status         : FAIL
+Missing        : 3000, 9090
+
+
+Available Updates
+-----------------
+
+Total Updates    : 112
+
+Security Updates :80
+
+
+Pre-Patch Safety Check
+----------------------
+
+Disk Space       : PASS
+Package Manager  : PASS
+System Load      : PASS
+Internet Access  : PASS
+DNS Resolution   : PASS
+Reboot Required  : NO
+
+
+Overall Decision
+----------------
+
+
+Decision : PATCH ABORTED
+
+Failed Checks
+-------------
+✘ Critical Services
+✘ Missing Expected Ports
+
+
+
+===========================================
+
+===========================================
+SERVER : nat
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : nat
+Hostname        : ip-10-0-1-129
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1009-aws
+Architecture    : x86_64
+Uptime          : up 13 hours, 19 minutes
+CPU vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.1.129
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 59.1%
+Threshold     : >20%
+Status        : PASS
+
+Network & Connectivity
+----------------------
+
+Gateway : 10.0.1.1
+DNS     : 127.0.0.53
+
+
+Critical Services
+-----------------
+
+
+Listening Ports
+---------------
+ 
+
+Expected Ports : 
+Actual Ports   : 53, 68, 323, 22
+Status         : WARNING
+Unexpected     : 22, 323, 68, 53
+
+
+Available Updates
+-----------------
+
+Total Updates    : 42
+
+Security Updates :10
+
+
+Pre-Patch Safety Check
+----------------------
+
+Disk Space       : PASS
+Package Manager  : PASS
+System Load      : PASS
+Internet Access  : PASS
+DNS Resolution   : PASS
+Reboot Required  : YES
+
+
+Overall Decision
+----------------
+
+
+Decision : WARNING !!!
+
+Warnings
+--------
+⚠  Unexpected Ports
+⚠  Reboot Required
+
+
+
+===========================================
+
+===========================================
+SERVER : bastion
+===========================================
+
+Server Details
+--------------
+
+Inventory Alias : bastion
+Hostname        : ip-10-0-1-39
+Operating Sys   : Ubuntu 26.04
+Kernel          : 7.0.0-1009-aws
+Architecture    : x86_64
+Uptime          : up 13 hours, 19 minutes
+CPU vCPUs       : 2 vCPUs
+Memory (MB)     : 908 MB
+Private IP      : 10.0.1.39
+
+Disk Usage
+----------
+
+Filesystem    : /
+Total Space   : 6.6 GB
+Available     : 57.4%
+Threshold     : >20%
+Status        : PASS
+
+Network & Connectivity
+----------------------
+
+Gateway : 10.0.1.1
+DNS     : 127.0.0.53
+
+
+Critical Services
+-----------------
+
+SSH : RUNNING
+
+Listening Ports
+---------------
+ 
+
+Expected Ports : 22
+Actual Ports   : 323, 53, 68, 22
+Status         : WARNING
+Unexpected     : 323, 68, 53
+
+
+Available Updates
+-----------------
+
+Total Updates    : 30
+
+Security Updates :10
+
+
+Pre-Patch Safety Check
+----------------------
+
+Disk Space       : PASS
+Package Manager  : PASS
+System Load      : PASS
+Internet Access  : PASS
+DNS Resolution   : PASS
+Reboot Required  : YES
+
+
+Overall Decision
+----------------
+
+
+Decision : WARNING !!!
+
+Warnings
+--------
+⚠  Unexpected Ports
+⚠  Reboot Required
+
+
+
+===========================================
+

@@ -62,12 +62,14 @@
       command: sysctl -n net.ipv4.ip_forward
       register: ip_forward
       changed_when: false
+      become: true
 
     - name: Check NAT rule
-      shell: iptables -t nat -C POSTROUTING -o ens5 -j MASQUERADE
+      shell: iptables -t nat -L POSTROUTING -n | grep -q MASQUERADE
       register: nat_rule
       changed_when: false
       failed_when: false
+      become: true
 
     - name: Generate Pre-Patch Health Report
       template:

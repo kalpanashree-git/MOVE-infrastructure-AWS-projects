@@ -58,6 +58,17 @@
       changed_when: false
       failed_when: false
 
+    - name: Check IP forwarding
+      command: sysctl -n net.ipv4.ip_forward
+      register: ip_forward
+      changed_when: false
+
+    - name: Check NAT rule
+      shell: iptables -t nat -C POSTROUTING -o ens5 -j MASQUERADE
+      register: nat_rule
+      changed_when: false
+      failed_when: false
+
     - name: Generate Pre-Patch Health Report
       template:
         src: ../templates/health-report.j2

@@ -48,19 +48,22 @@ DNS Resolution  : {{ 'PASS' if hostvars[host].dns_check.rc == 0 else 'FAIL' }}
 
 Critical Services
 -----------------
+{% if host in groups['nat_servers'] %}
+IP Forwarding : {{ 'ENABLED' if hostvars[host].ip_forward.stdout == '1' else 'DISABLED' }}
+NAT Rule      : {{ 'ACTIVE' if hostvars[host].nat_rule.rc == 0 else 'MISSING' }}
+{% else %}
 {% if host in groups['bastion_servers'] %}
 {% set role = server_roles.bastion %}
 {% elif host in groups['app_servers'] %}
 {% set role = server_roles.app %}
 {% elif host in groups['monitoring_servers'] %}
 {% set role = server_roles.monitor %}
-{% elif host in groups['nat_servers'] %}
-{% set role = server_roles.nat %}
 {% endif %}
 
 {% for service in role.services %}
 {{ service | upper }} : {{ hostvars[host].ansible_facts.services[service + '.service'].state | default('not found') | upper }}
 {% endfor %}
+{% endif %}
 
 Listening Ports
 ---------------
@@ -68,11 +71,9 @@ Listening Ports
 {% set actual_ports = hostvars[host].listening_ports.stdout | regex_findall(':(\d+)\\s') | unique | list %}
 {% set missing_ports = expected_ports | difference(actual_ports) %}
 {% set unexpected_ports = actual_ports | difference(expected_ports) %}
-Expected Ports : {{ role.ports | join(', ') if role.ports else 'N/A' }}
+Expected Ports : {{ role.ports | join(', ') }}
 Actual Ports   : {{ actual_ports | join(', ') }}
-{% if host in groups['nat_servers'] %}
-Status         : NOT APPLICABLE
-{% elif missing_ports | length > 0 %}
+{% if missing_ports | length > 0 %}
 Status         : FAIL
 Missing        : {{ missing_ports | join(', ')}}
 {% elif unexpected_ports | length > 0 %}
@@ -115,14 +116,12 @@ Overall Decision
 {% set internet_ok = hostvars[host].internet_check.rc == 0 %}
 {% set dns_ok = hostvars[host].dns_check.rc == 0 %}
 {% set reboot_pending = hostvars[host].reboot_required.stat.exists %}
-{% set critical_failure = not disk_ok or not package_ok or not load_ok or not internet_ok or not dns_ok or service_failed.value or (missing_ports | length > 0) %}
+{% set nat_failed = host in groups['nat_servers'] and (hostvars[host].ip_forward.stdout != '1' or hostvars[host].nat_rule.rc != 0) %}
+{% set critical_failure = not disk_ok or not package_ok or not load_ok or not internet_ok or not dns_ok or service_failed.value or (missing_ports | length > 0) or nat_failed %}
 {% set warning = (unexpected_ports | length > 0) or reboot_pending %}
 
 {% if critical_failure %}
-Decision :  ____________________________
-           |                            |
-           |   [X] ABORT THE PATCH!!!   |
-           |____________________________|
+Decision : PATCH ABORTED
 
 Failed Checks
 -------------
@@ -140,12 +139,10 @@ Failed Checks
 {% endif %}
 {% if missing_ports | length > 0 %}✘ Missing Expected Ports
 {% endif %}
-
+{% if nat_failed %}✘ NAT Configuration
+{% endif %}
 {% elif warning  %}
-Decision :  ________________________
-           |                        |
-           |     [!] WARNING!!!     |
-           |________________________|
+Decision : WARNING !!!
 
 Warnings
 --------
@@ -154,10 +151,7 @@ Warnings
 {% if reboot_pending %}⚠  Reboot Required
 {% endif %}
 {% else %}
-Decision :  ___________________________
-           |                           |
-           |    [OK] SAFE TO PATCH     |
-           |___________________________|
+Decision : SAFE TO PATCH
 {% endif %}
 
 

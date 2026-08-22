@@ -1,0 +1,68 @@
+=============================================
+     MOVE TECHNOLGIES POST-PATCH REPORT
+=============================================
+
+
+SERVER : app1
+
+PATCH STATUS : WARNING
+
+Reason / Warning
+----------------
+
+⚠  Unexpected Ports
+⚠  Reboot Required
+
+User Approval : NOT APPLICABLE
+
+
+
+
+SERVER : app2
+
+PATCH STATUS : PATCH ABORTED
+
+Reason
+------
+
+✘ Critical Services
+✘ Missing Expected Ports
+
+Action : NO PATCH PERFORMED
+
+
+
+SERVER : monitor
+
+PATCH STATUS : PATCH ABORTED
+
+Reason
+------
+
+✘ Critical Services
+✘ Missing Expected Ports
+
+Action : NO PATCH PERFORMED
+
+
+
+SERVER : nat
+
+PATCH STATUS : SAFE TO PATCH
+
+Action : PATCH PERFORMED
+
+
+SERVER : bastion
+
+PATCH STATUS : WARNING
+
+Reason / Warning
+----------------
+
+⚠  Unexpected Ports
+
+User Approval : NOT APPLICABLE
+
+
+

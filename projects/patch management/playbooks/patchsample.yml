@@ -1,0 +1,40 @@
+---
+- name: MOVE Technologies Patch Management
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    prepatch_report: "{{ playbook_dir }}/../reports/pre-patch-20260819-024028.txt"
+
+  tasks:
+
+    - name: Show selected report
+      debug:
+        msg: "Using pre-patch report: {{ prepatch_report }}"
+
+    - name: Read pre-patch report
+      slurp:
+        src: "{{ prepatch_report }}"
+      register: report_file
+
+    - name: Decode pre-patch report
+      set_fact:
+        report_text: "{{ report_file.content | b64decode }}"
+
+    - name: Split report into server blocks
+      set_fact:
+        server_blocks: "{{ report_text.split('===========================================\nSERVER : ')[1:] }}"
+
+    - name: Extract patch decisions
+      set_fact:
+        patch_decisions: "{{ patch_decisions | default([]) + [ {
+          'server': item.split('\n')[0],
+          'decision': 'SAFE TO PATCH' if '[OK] SAFE TO PATCH' in item else 'PATCH ABORTED' if '[X] ABORT THE PATCH!!!' in item else 'WARNING'
+        } ] }}"
+      loop: "{{ server_blocks }}"
+      loop_control:
+        label: "{{ item.split('\n')[0] }}"
+
+    - name: Show patch decisions
+      debug:
+        var: patch_decisions

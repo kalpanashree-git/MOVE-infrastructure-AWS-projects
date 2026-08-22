@@ -1,0 +1,179 @@
+---
+- name: MOVE Technologies Patch Management
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    prepatch_report: "{{ playbook_dir }}/../reports/pre-patch-20260819-024028.txt"
+
+  tasks:
+
+    - name: Showing pre-patch report being used
+      debug:
+        msg: "Using pre-patch report: {{ prepatch_report }}"
+
+    - name: Reading pre-patch report
+      slurp:
+        src: "{{ prepatch_report }}"
+      register: report_file
+
+    - name: Decoding pre-patch report
+      set_fact:
+        report_text: "{{ report_file.content | b64decode }}"
+
+    - name: Spliting report into server blocks
+      set_fact:
+        server_blocks: "{{ report_text.split('===========================================\nSERVER : ')[1:] }}"
+
+    - name: Initializing patch decisions
+      set_fact:
+        patch_decisions: []
+
+    - name: Collecting patch decisions and reasons from pre-patch report
+      set_fact:
+        patch_decisions: "{{ patch_decisions + [ {
+          'server': item.split('\n')[0],
+          'decision': 'SAFE TO PATCH'
+            if '[OK] SAFE TO PATCH' in item
+            else ('PATCH ABORTED'
+            if '[X] ABORT THE PATCH!!!' in item
+            else 'WARNING'),
+          'reasons': (
+            item.split('Failed Checks\n-------------')[1].split('\n\n')[0].splitlines()
+            if 'Failed Checks\n-------------' in item
+            else (item.split('Warnings\n--------')[1].split('\n\n')[0].splitlines()
+            if 'Warnings\n--------' in item
+            else [])
+          )
+        } ] }}"
+      loop: "{{ server_blocks }}"
+      loop_control:
+        label: "{{ item.split('\n')[0] }}"
+
+    - name: Showing patch decisions
+      debug:
+        msg:
+          server: "{{ item.server }}"
+          decision: "{{ item.decision }}"
+          reasons: "{{ item.reasons }}"
+      loop: "{{ patch_decisions }}"
+      loop_control:
+        label: "{{ item.server }}"
+
+    - name: Patching safe servers
+      apt:
+        name: "*"
+        state: latest
+        update_cache: true
+      become: true
+      delegate_to: "{{ item.server }}"
+      register: safe_patch_result 
+      when: item.decision == "SAFE TO PATCH"
+      loop: "{{ patch_decisions }}"
+      loop_control:
+        label: "{{ item.server }}"
+
+    - name: Asking whether to patch warning servers
+      pause:
+        prompt: |
+          WARNING: {{ item.server }} has pre-patch warnings
+
+          Reasons: 
+          {% for reason in item.reasons %}
+          {{ reason }}
+          {% endfor %}
+
+          Do you want to patch this server anyway? (yes/no)
+      register: warning_approval
+      when: item.decision == "WARNING"
+      loop: "{{ patch_decisions }}"
+      loop_control:
+        label: "{{ item.server }}"
+
+    - name: Show warning approval
+      debug:
+        msg: |
+          SERVER : {{ item.item.server }}
+          User Approval : {{ item.user_input | upper }}
+      loop: "{{ warning_approval.results }}"
+      when: item.user_input is defined
+      loop_control:
+        label: "{{ item.item.server }}"
+
+    - name: Patching approved warning servers
+      apt:
+        name: "*"
+        state: latest
+        update_cache: true
+      become: true
+      delegate_to: "{{ item.item.server }}"
+      register: warning_patch_result
+      when:
+        - item.user_input is defined
+        - item.user_input | lower == "yes"
+      loop: "{{ warning_approval.results }}"
+      loop_control:
+        label: "{{ item.item.server }}"
+
+    - name: Listing successfully patched servers
+      set_fact:
+       successful_patches: >-
+         {{
+           (safe_patch_result.results
+            | selectattr('changed', 'equalto' ,true)
+            | map(attribute='item')
+            | list
+           )
+           +
+           (warning_patch_result.results
+            | selectattr('changed', 'equalto', true)
+            | map(attribute='item.item.server')
+            | list
+           )
+         }} 
+
+    - name: Build final patch decisions
+      set_fact:
+        final_patch_decisions: "{{ final_patch_decisions | default([]) + [ {
+          'server': item.server,
+          'pre_patch_decision': item.decision,
+          'reasons': item.reasons,
+          'user_approval': (
+            warning_approval.results
+            | selectattr('item.server', 'equalto', item.server)
+            | map(attribute='user_input')
+            | first
+            | default('N/A')
+          ),
+          'patch_status': (
+            'PATCHED'
+            if item.server in successful_patches
+            else 'SKIPPED'
+            if item.decision == 'WARNING'
+            else 'PATCH ABORTED'
+          )
+        } ] }}"
+      loop: "{{ patch_decisions }}"
+      loop_control:
+        label: "{{ item.server }}"
+
+    - name: Inspect patch decisions
+      debug:
+        var: patch_decisions
+
+    - name: Running post-patch health check
+      command: >
+        ansible-playbook {{playbook_dir }}/health-check.yml
+        --limit "{{ successful_patches | join(',') }}"
+      delegate_to: localhost
+      when: successful_patches | length > 0
+
+    - name: Showing successful patches
+      debug:
+        var: successful_patches
+
+    - name: Generating post-patch report
+      template:
+        src: "{{ playbook_dir }}/../templates/post-patch-report.j2"
+        dest: "{{ playbook_dir }}/../reports/post-patch-reports/post-patch-report{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}.txt"
+      delegate_to: localhost

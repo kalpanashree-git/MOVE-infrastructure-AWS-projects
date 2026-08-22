@@ -1,0 +1,45 @@
+=============================================
+     MOVE TECHNOLGIES POST-PATCH REPORT
+=============================================
+
+{% for item in final_patch_decisions %}
+
+SERVER : {{ item.server }}
+
+PATCH STATUS : {{ item.patch_status }}
+
+{% if item.pre_patch_decision == 'PATCH ABORTED' %}
+Reason:
+-------
+{% for reason in item.reasons %}
+{{ reason }}
+{% endfor %}
+
+Action : NO PATCH PERFORMED
+
+{% elif item.pre_patch_decision == 'WARNING' %}
+{% if item.patch_status == 'PATCHED' %}
+Action : PATCH PERFORMED
+{% elif item.patch_status == 'SKIPPED' %}
+Action : NO PATCH PERFORMED
+{% endif %}
+
+Reason / Warning:
+-----------------
+{% for reason in item.reasons %}
+{{reason}}
+{% endfor %}
+
+User Approval : {{ item.user_approval | upper }}
+
+{% if item.user_approval | default('') | lower == 'no' %}
+Action : NO PATCH PERFORMED
+{% endif %}
+
+{% else %}
+Action : PATCH PERFORMED
+{% endif %}
+
+{% endfor %}
+
+=============================================

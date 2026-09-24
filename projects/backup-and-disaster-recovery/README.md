@@ -1,27 +1,15 @@
-# Project 02: Metric-Gated Canary
+# Project 03: Backup, Restore and Recovery Verification
 
-**Status: In progress**
+**Status: Planned**
 
 ## Problem
-A release can pass CI and still fail under real traffic. How can a pipeline deploy a new container to one server first, judge it using live Prometheus metrics, then automatically promote it, or roll back and alert, without a human watching?
+If important application or configuration data disappears, or a server becomes unusable, can I actually recover it?
 
-## Planned design
-- GitHub Actions builds a Docker image and deploys it to App2 (canary).
-- The pipeline generates traffic for 3 minutes, then queries Prometheus for error rate, p95 latency and memory.
-- Healthy: promote to App1. Unhealthy: roll back to the previous image and send an Alertmanager notification.
-- If metrics cannot be read, the release fails (fail closed).
+## Planned scope
+- Back up configuration and application files to Amazon S3, with retention.]\
+- Validate backups, then deliberately delete or corrupt data and perform a real restore.
+- Measure RPO (potential data loss) and RTO (actual recovery time).
+- Keep file recovery, application recovery and infrastructure recovery clearly separate.
 
-## Tools
-GitHub Actions, Docker, Prometheus, Grafana, Alertmanager, Node Exporter, Bash
-
-## Progress
-- [ ] Monitoring foundation (Node Exporter, Prometheus, Grafana)
-- [ ] Demo app in Docker with its own metrics
-- [ ] CI pipeline
-- [ ] Image registry and self-hosted runner
-- [ ] Canary deploy, metric gate, promote or rollback
-- [ ] Alerting and dashboard
-- [ ] Failure scenarios, incident reports and runbooks
-
-Evidence (screenshots, reports) will be added as each step is completed.
+**Tools:** Bash, AWS CLI, S3, IAM, Ansible
 

@@ -23,7 +23,7 @@ See [`infrastructure/`](infrastructure/) and [`architecture/`](architecture/) fo
 
 | # | Project | Focus | Main tools | Status |
 |---|---------|-------|------------|--------|
-| 01 | [Patch Management and Health Validation](projects/'patch management'/) | Safe maintenance and change | Ansible, Bash, Jinja2, Linux | Complete |
+| 01 | [Patch Management and Health Validation](projects/patch%20management/) | Safe maintenance and change | Ansible, Bash, Jinja2, Linux | Complete |
 | 02 | [Metric-Gated Canary](projects/02-metric-gated-canary/) | Safe releases, detection, rollback | GitHub Actions, Docker, Prometheus, Grafana, Alertmanager | In progress |
 | 03 | [Backup, Restore and Recovery](projects/backup-and-disaster-recovery/) | Recovery, RTO/RPO | Bash, AWS CLI, S3, Ansible | Planned |
 | 04 | [Configuration Drift Management](projects/04-config-drift/) | Consistency, access, security | Ansible, IAM, SSH, Security Groups | Planned |

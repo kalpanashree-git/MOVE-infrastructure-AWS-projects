@@ -14,6 +14,15 @@ A release can pass CI and still fail under real traffic. How can a pipeline depl
 ## Tools
 GitHub Actions, Docker, Prometheus, Grafana, Alertmanager, Node Exporter, Bash
 
+## port and security group plan
+| Server | Inbound rule | From | Why |
+|---|---|---|---|
+| Monitoring | TCP 22 | Bastion security group | Admin SSH |
+| App1 and App2 | TCP 22 | Bastion SG and Monitoring SG | Admin SSH and pipeline deploys |
+| App1 and App2 | TCP 9100 | Monitoring SG | Node Exporter scrape |
+| App1 and App2 | TCP 8080 | Monitoring SG | App scrape, load test and health checks |
+| Bastion and NAT | TCP 9100 | Monitoring SG | Node Exporter scrape |
+
 ## Progress
 - [ ] Monitoring foundation (Node Exporter, Prometheus, Grafana)
 - [ ] Demo app in Docker with its own metrics
@@ -22,6 +31,7 @@ GitHub Actions, Docker, Prometheus, Grafana, Alertmanager, Node Exporter, Bash
 - [ ] Canary deploy, metric gate, promote or rollback
 - [ ] Alerting and dashboard
 - [ ] Failure scenarios, incident reports and runbooks
+
 
 Evidence (screenshots, reports) will be added as each step is completed.
 
